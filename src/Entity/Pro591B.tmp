@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass=ProductRepository::class)
+ */
+class Product
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Factuurregel::class, mappedBy="no")
+     */
+    private $Factuur_regel_id;
+
+    public function __construct()
+    {
+        $this->Factuur_regel_id = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Collection|Factuurregel[]
+     */
+    public function getFactuurRegelId(): Collection
+    {
+        return $this->Factuur_regel_id;
+    }
+
+    public function addFactuurRegelId(Factuurregel $factuurRegelId): self
+    {
+        if (!$this->Factuur_regel_id->contains($factuurRegelId)) {
+            $this->Factuur_regel_id[] = $factuurRegelId;
+            $factuurRegelId->setNo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFactuurRegelId(Factuurregel $factuurRegelId): self
+    {
+        if ($this->Factuur_regel_id->contains($factuurRegelId)) {
+            $this->Factuur_regel_id->removeElement($factuurRegelId);
+            // set the owning side to null (unless already changed)
+            if ($factuurRegelId->getNo() === $this) {
+                $factuurRegelId->setNo(null);
+            }
+        }
+
+        return $this;
+    }
+}
